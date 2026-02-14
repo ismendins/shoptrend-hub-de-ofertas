@@ -1,8 +1,8 @@
-
 export enum StoreType {
   SHOPEE = 'Shopee',
   TIKTOK = 'TikTok Shop',
-  ALIEXPRESS = 'AliExpress'
+  ALIEXPRESS = 'AliExpress',
+  AMAZON = 'Amazon'
 }
 
 export interface Product {

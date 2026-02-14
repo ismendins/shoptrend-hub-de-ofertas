@@ -22,12 +22,12 @@ export const LiquidBackground: React.FC = () => {
     window.addEventListener('resize', resize);
     resize();
 
-    // Configuração das esferas de "líquido"
+    // Configuração das esferas de "líquido" adaptadas para a nova paleta
     const blobs = [
-      { x: 0, y: 0, r: 0.7, color: 'rgba(79, 70, 229, 0.4)', speed: 0.002, offset: 0 },    // Indigo
-      { x: 0, y: 0, r: 0.6, color: 'rgba(139, 92, 246, 0.3)', speed: 0.0015, offset: 2 },  // Violet
-      { x: 0, y: 0, r: 0.8, color: 'rgba(6, 182, 212, 0.2)', speed: 0.001, offset: 4 },    // Cyan
-      { x: 0, y: 0, r: 0.5, color: 'rgba(217, 70, 239, 0.25)', speed: 0.0025, offset: 5 }  // Fuchsia
+      { x: 0, y: 0, r: 0.7, color: 'rgba(136, 22, 0, 0.4)', speed: 0.002, offset: 0 },    // Brand Principal
+      { x: 0, y: 0, r: 0.6, color: 'rgba(209, 31, 22, 0.3)', speed: 0.0015, offset: 2 },  // Brand 600
+      { x: 0, y: 0, r: 0.8, color: 'rgba(121, 23, 18, 0.2)', speed: 0.001, offset: 4 },   // Brand 900
+      { x: 0, y: 0, r: 0.5, color: 'rgba(255, 107, 98, 0.25)', speed: 0.0025, offset: 5 } // Brand 400
     ];
 
     const render = (time: number) => {
