@@ -1,0 +1,1 @@
+# shoptrend-hub-de-ofertas
