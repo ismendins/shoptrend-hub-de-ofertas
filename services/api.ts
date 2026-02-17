@@ -1,14 +1,18 @@
 import { Product } from "../types";
 
-const isDev = import.meta.env;
+const isDev = import.meta.env.DEV;
 
+// 🔴 MUDOU: Base URL para Cloudflare
 const API_BASE_URL = isDev
-  ? "http://localhost:8888/.netlify/functions"
-  : "/.netlify/functions";
+  ? "http://localhost:8788"  // Cloudflare local dev
+  : "";  // Em produção, mesma origem
 
 // Função utilitária para requests
 async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  // 🔴 MUDOU: URL construída diferente
+  const url = isDev ? `${API_BASE_URL}${endpoint}` : endpoint;
+  
+  const response = await fetch(url, {
     headers: {
       "Content-Type": "application/json",
       ...(options?.headers || {}),
@@ -23,6 +27,7 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
   return response.json();
 }
 
+// ✅ Todo o resto permanece IGUAL
 export const ProductService = {
   async getProducts(): Promise<Product[]> {
     try {
@@ -42,7 +47,7 @@ export const ProductService = {
         body: JSON.stringify({ productId }),
       });
     } catch {
-      // Falha silenciosa — não quebra a experiência do usuário
+      // Falha silenciosa
     }
   },
 
