@@ -1,31 +1,59 @@
-
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { ProductCard } from './components/ProductCard';
 import { Footer } from './components/Footer';
 import { LiquidBackground } from './components/LiquidBackground';
 import { PromotionsScreen } from './components/PromotionsScreen';
-import { MOCK_PRODUCTS } from './constants';
+import { BackToTop } from './components/BackToTop';
+import { ProductService } from './services/api';
+import { Product } from './types';
 
 type ViewType = 'home' | 'promotions';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewType>('home');
+  const [preselectedStore, setPreselectedStore] = useState<string>('all');
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [loadingFeatured, setLoadingFeatured] = useState(true);
 
-  const handleViewChange = (view: ViewType) => {
+  const handleViewChange = (view: ViewType, store: string = 'all') => {
+    setPreselectedStore(store);
     setCurrentView(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const featuredProducts = MOCK_PRODUCTS.slice(0, 5);
+  // Buscar produtos do backend ao carregar
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        setLoadingFeatured(true);
+        const products = await ProductService.getProducts();
+        
+        // Ordenar por catalogNumber desc (mais recentes) e pegar os 5 primeiros
+        const featured = [...products]
+          .sort((a, b) => b.catalogNumber - a.catalogNumber)
+          .slice(0, 5);
+        
+        setFeaturedProducts(featured);
+      } catch (error) {
+        console.error('Erro ao carregar produtos em destaque:', error);
+        // Em caso de erro, mantém array vazio
+        setFeaturedProducts([]);
+      } finally {
+        setLoadingFeatured(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
 
   return (
     <div className="min-h-screen text-zinc-50 selection:bg-brand-800 selection:text-white relative">
       <LiquidBackground />
       
       <div className="relative z-10">
-        <Header currentView={currentView} onViewChange={handleViewChange} />
+        <Header currentView={currentView} onViewChange={(view) => handleViewChange(view)} />
 
         <main>
           {currentView === 'home' ? (
@@ -52,11 +80,25 @@ const App: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                  {featuredProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
+                {/* Grid de Produtos */}
+                {loadingFeatured ? (
+                  <div className="flex items-center justify-center py-20">
+                    <div className="relative">
+                      <div className="w-16 h-16 border-4 border-zinc-800 border-t-brand-500 rounded-full animate-spin"></div>
+                      <div className="absolute inset-0 flex items-center justify-center font-black text-brand-500 text-xs italic">S</div>
+                    </div>
+                  </div>
+                ) : featuredProducts.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                    {featuredProducts.map((product) => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-20 text-center">
+                    <p className="text-zinc-500 text-lg">Nenhum produto disponível no momento.</p>
+                  </div>
+                )}
 
                 {/* Banner VIP */}
                 <div className="mt-32 p-10 md:p-16 rounded-[3.5rem] bg-gradient-to-br from-brand-900/40 to-brand-800/10 border border-white/10 backdrop-blur-3xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-10">
@@ -95,9 +137,14 @@ const App: React.FC = () => {
                   </div>
                 </div>
               </section>
+
+              <BackToTop />
             </>
           ) : (
-            <PromotionsScreen />
+            <>
+              <PromotionsScreen initialStore={preselectedStore} />
+              <BackToTop />
+            </>
           )}
         </main>
 

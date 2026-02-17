@@ -1,3 +1,4 @@
+
 export enum StoreType {
   SHOPEE = 'Shopee',
   TIKTOK = 'TikTok Shop',
@@ -8,19 +9,16 @@ export enum StoreType {
 export interface Product {
   id: string;
   title: string;
-  price: number;
-  originalPrice?: number;
   imageUrl: string;
   store: StoreType;
   link: string;
-  rating: number;
-  reviews: number;
+  catalogNumber: number;
   tag?: string;
   category: string;
+  clicks?: number; // Campo dinâmico para o ranking
 }
 
 export interface Category {
   id: string;
   label: string;
-  icon: string;
 }
