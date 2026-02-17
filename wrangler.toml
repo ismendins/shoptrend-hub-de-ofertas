@@ -1,0 +1,13 @@
+name = "shoptrend-hub"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "dist"
+
+# Configuração de assets
+[assets]
+directory = "./dist"
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+[env.production.vars]
+# As variáveis de ambiente serão configuradas no dashboard do Cloudflare
